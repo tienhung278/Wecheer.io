@@ -1,0 +1,8 @@
+<div class="container">
+  <img [src]="imageUrl" alt="Image" width="800px">
+  <ul>
+    <li>Description: {{ description }}</li>
+    <li>Received at: {{ timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</li>
+    <li>Last hour count: {{ lastHourCount }}</li>
+  </ul>
+</div>
