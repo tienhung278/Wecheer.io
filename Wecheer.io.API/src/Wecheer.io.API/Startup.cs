@@ -36,7 +36,7 @@ public class Startup
         app.UseCors();
         
         app.UseSwagger();
-        app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "ImageEvent API V1"); });
+        app.UseSwaggerUI(c => { c.SwaggerEndpoint("/Prod/swagger/v1/swagger.json", "ImageEvent API V1"); });
 
         app.UseHttpsRedirection();
 

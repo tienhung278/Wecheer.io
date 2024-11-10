@@ -5,6 +5,6 @@ namespace Wecheer.io.API.Data;
 public interface IImageEventStore
 {
     void Add(ImageEvent @event);
-    ImageEvent GetLastEvent();
+    ImageEvent? GetLastEvent();
     int GetLastHourCount();
 }

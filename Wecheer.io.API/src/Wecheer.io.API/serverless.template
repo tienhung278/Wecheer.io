@@ -5,6 +5,45 @@
   "Parameters": {},
   "Conditions": {},
   "Resources": {
+    "AspNetCoreFunctionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "KinesisAccessPolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "kinesis:GetRecords",
+                    "kinesis:GetShardIterator",
+                    "kinesis:DescribeStream",
+                    "kinesis:DescribeStreamSummary",
+                    "kinesis:ListShards",
+                    "kinesis:ListStreams"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
     "AspNetCoreFunction": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
@@ -13,25 +52,51 @@
         "CodeUri": "",
         "MemorySize": 512,
         "Timeout": 30,
-        "Role": null,
+        "Role": {
+          "Fn::GetAtt": ["AspNetCoreFunctionRole", "Arn"]
+        },
         "Policies": [
           "AWSLambda_FullAccess"
         ],
+        "Environment": {
+          "Variables": {
+            "ASPNETCORE_ENVIRONMENT": "Production"
+          }
+        },
         "Events": {
-          "ProxyResource": {
-            "Type": "Api",
-            "Properties": {
-              "Path": "/{proxy+}",
-              "Method": "ANY"
-            }
-          },
           "RootResource": {
             "Type": "Api",
             "Properties": {
               "Path": "/",
               "Method": "ANY"
             }
+          },
+          "ProxyResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/{proxy+}",
+              "Method": "ANY"
+            }
           }
+        }
+      }
+    },
+    "KinesisStream": {
+      "Type": "AWS::Kinesis::Stream",
+      "Properties": {
+        "ShardCount": 1
+      }
+    },
+    "KinesisEventSourceMapping": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "Properties": {
+        "BatchSize": 100,
+        "StartingPosition": "TRIM_HORIZON",
+        "EventSourceArn": {
+          "Fn::GetAtt": ["KinesisStream", "Arn"]
+        },
+        "FunctionName": {
+          "Ref": "AspNetCoreFunction"
         }
       }
     }

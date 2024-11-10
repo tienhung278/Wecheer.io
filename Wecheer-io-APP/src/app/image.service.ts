@@ -8,7 +8,7 @@ import {ImageEvent} from './image-info.model';
 })
 export class ImageService {
 
-  private apiUrl = 'https://szv7e9e4c4.execute-api.ap-southeast-1.amazonaws.com/Prod/api/image';
+  private apiUrl = 'https://nbj45p0i11.execute-api.ap-southeast-1.amazonaws.com/Prod/api/image';
 
   constructor(private http: HttpClient) { }
 

@@ -11,7 +11,7 @@ public class ImageEventStore : IImageEventStore
         _events.Add(@event);
     }
 
-    public ImageEvent GetLastEvent()
+    public ImageEvent? GetLastEvent()
     {
         return _events.LastOrDefault();
     }
